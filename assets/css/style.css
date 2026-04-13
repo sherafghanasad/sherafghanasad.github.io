@@ -267,7 +267,7 @@ hr {
 .pub-title {
   margin: 0 0 0.25em;
   font-size: 1.05em;
-  font-weight: 600;
+  font-weight: bold;
 }
 .pub-title a { color: #e06d5e; }
 
@@ -280,7 +280,7 @@ hr {
 .pub-journal {
   margin: 0 0 0.75em;
   font-style: italic;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 0.95rem;
 }
 
@@ -294,7 +294,7 @@ details {
 }
 details summary {
   cursor: pointer;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 0.95rem;
   color: #24282d;
 }
@@ -312,7 +312,7 @@ details p {
 .course-title {
   margin: 0 0 2px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: bold;
 }
 .course-meta {
   margin: 0 0 2px;
@@ -340,7 +340,7 @@ details p {
 
 .writing-title {
   font-size: 0.97rem;
-  font-weight: 600;
+  font-weight: bold;
   line-height: 1.3;
 }
 .writing-title a { color: #e06d5e; }
@@ -365,7 +365,7 @@ details p {
 }
 .engagement-title {
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: bold;
   color: #24282d;
 }
 .engagement-partner {
