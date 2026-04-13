@@ -4,7 +4,7 @@
 html { font-size: 16px; scroll-behavior: smooth; }
 
 body {
-  font-family: 'Source Sans Pro', 'Georgia', serif;
+  font-family: 'Alegreya', serif;
   color: #333;
   line-height: 1.6;
   background: #fff;
@@ -340,7 +340,7 @@ details p {
   font-size: 0.75rem;
   color: #aaa;
   margin-top: 3px;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Alegreya', serif;
 }
 
 .writing-desc {
