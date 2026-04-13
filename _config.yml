@@ -1,0 +1,35 @@
+# Site settings
+title: Sher Afghan Asad
+description: Applied Microeconomist | Fulbright Scholar
+url: "https://sherafghanasad.com"
+baseurl: ""
+
+# Build settings
+markdown: kramdown
+permalink: /:title/
+
+# Exclude from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
+
+# Collections (for future blog/business use)
+collections:
+  posts:
+    output: true
+    permalink: /blog/:title/
+
+# Default front matter
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+
+# Plugins (GitHub Pages compatible)
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap

@@ -1,0 +1,47 @@
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="site-branding">
+      <a href="{{ '/' | relative_url }}" class="site-title">{{ site.title }}</a>
+      <span class="site-tagline">{{ site.description }}</span>
+    </div>
+    <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="site-nav" id="site-nav">
+      <ul class="nav-list">
+        <li><a href="{{ '/' | relative_url }}" {% if page.url == '/' %}class="active"{% endif %}>About Me</a></li>
+        <li class="has-dropdown">
+          <a href="{{ '/research/' | relative_url }}" {% if page.url == '/research/' %}class="active"{% endif %}>Research</a>
+          <ul class="dropdown">
+            <li><a href="{{ '/research/' | relative_url }}#journal-articles">Journal Articles</a></li>
+            <li><a href="{{ '/research/' | relative_url }}#book-chapters">Book Chapters</a></li>
+            <li><a href="{{ '/research/' | relative_url }}#working-papers">Working Papers</a></li>
+            <li><a href="{{ '/research/' | relative_url }}#research-in-progress">Research in Progress</a></li>
+          </ul>
+        </li>
+        <li class="has-dropdown">
+          <a href="{{ '/teaching/' | relative_url }}" {% if page.url == '/teaching/' %}class="active"{% endif %}>Teaching</a>
+          <ul class="dropdown">
+            <li><a href="{{ '/teaching/' | relative_url }}#lums">LUMS</a></li>
+            <li><a href="{{ '/teaching/' | relative_url }}#iowa-state">Iowa State University</a></li>
+          </ul>
+        </li>
+        <li class="has-dropdown">
+          <a href="{{ '/broader-audience-writing/' | relative_url }}" {% if page.url == '/broader-audience-writing/' %}class="active"{% endif %}>Broader Audience Writing</a>
+          <ul class="dropdown">
+            <li><a href="{{ '/broader-audience-writing/' | relative_url }}#policy-writing">Policy Writing</a></li>
+            <li><a href="{{ '/broader-audience-writing/' | relative_url }}#media-coverage">Media Coverage</a></li>
+          </ul>
+        </li>
+        <li class="has-dropdown">
+          <a href="{{ '/policy-engagements/' | relative_url }}" {% if page.url == '/policy-engagements/' %}class="active"{% endif %}>Policy Engagements</a>
+          <ul class="dropdown">
+            <li><a href="{{ '/policy-engagements/' | relative_url }}#policy-engagements">Policy Engagements</a></li>
+            <li><a href="{{ '/policy-engagements/' | relative_url }}#talks-events">Talks & Events</a></li>
+          </ul>
+        </li>
+        <li><a href="{{ '/for-students/' | relative_url }}" {% if page.url == '/for-students/' %}class="active"{% endif %}>For Students</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
