@@ -4,13 +4,19 @@
 Run by .github/workflows/substack.yml on a schedule (and manually). Uses only
 the Python standard library, so no dependencies need to be installed.
 
-On any fetch/parse failure it leaves the existing data file untouched, so a
-transient Substack outage never wipes the posts already shown on the site.
+Strategy:
+  1. Fetch the publication's RSS feed directly (browser-like headers).
+  2. If that's blocked -- Substack/Cloudflare commonly 403s cloud/CI IPs --
+     fall back to the rss2json gateway, whose servers aren't blocked.
+On total failure it leaves the existing data file untouched, so a transient
+outage never wipes the posts already shown on the site.
 """
 import json
 import os
 import sys
+import urllib.parse
 import urllib.request
+from datetime import datetime
 from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
 from xml.etree import ElementTree as ET
@@ -19,6 +25,15 @@ FEED_URL = os.environ.get("SUBSTACK_FEED", "https://sherafghanasad.substack.com/
 MAX_POSTS = int(os.environ.get("SUBSTACK_MAX", "5"))
 OUT_PATH = os.environ.get("SUBSTACK_OUT", "_data/substack.json")
 EXCERPT_LEN = 220
+
+BROWSER_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "Accept": "application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 
 
 class _Stripper(HTMLParser):
@@ -54,29 +69,27 @@ def excerpt(text, limit=EXCERPT_LEN):
 def fmt_date(raw):
     if not raw:
         return ""
-    try:
+    raw = raw.strip()
+    try:  # RFC 822, the standard RSS pubDate format
         return parsedate_to_datetime(raw).strftime("%B %-d, %Y")
     except Exception:
-        return raw.strip()
+        pass
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S"):  # rss2json style
+        try:
+            return datetime.strptime(raw[:19], fmt).strftime("%B %-d, %Y")
+        except Exception:
+            pass
+    return raw
 
 
-def main():
-    req = urllib.request.Request(
-        FEED_URL, headers={"User-Agent": "Mozilla/5.0 (newsletter-sync)"}
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            raw = resp.read()
-    except Exception as exc:
-        print(f"::warning::Could not fetch {FEED_URL}: {exc}. Keeping existing data.")
-        return 0
+def _get(url, timeout=30):
+    req = urllib.request.Request(url, headers=BROWSER_HEADERS)
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return resp.read()
 
-    try:
-        root = ET.fromstring(raw)
-    except ET.ParseError as exc:
-        print(f"::warning::Could not parse feed: {exc}. Keeping existing data.")
-        return 0
 
+def from_rss(raw):
+    root = ET.fromstring(raw)
     ns = {"content": "http://purl.org/rss/1.0/modules/content/"}
     posts = []
     for item in root.iter("item"):
@@ -91,6 +104,39 @@ def main():
         })
         if len(posts) >= MAX_POSTS:
             break
+    return posts
+
+
+def from_rss2json(feed_url):
+    api = "https://api.rss2json.com/v1/api.json?" + urllib.parse.urlencode({"rss_url": feed_url})
+    data = json.loads(_get(api))
+    if data.get("status") != "ok":
+        raise RuntimeError("rss2json status %s: %s" % (data.get("status"), data.get("message")))
+    posts = []
+    for item in (data.get("items") or [])[:MAX_POSTS]:
+        desc = strip_html(item.get("description") or "") or strip_html(item.get("content") or "")
+        posts.append({
+            "title": (item.get("title") or "Untitled").strip(),
+            "link": (item.get("link") or "").strip(),
+            "date": fmt_date(item.get("pubDate")),
+            "excerpt": excerpt(desc),
+        })
+    return posts
+
+
+def main():
+    posts = None
+    try:
+        posts = from_rss(_get(FEED_URL))
+        print(f"Fetched {len(posts)} post(s) directly from {FEED_URL}")
+    except Exception as exc:
+        print(f"::warning::Direct fetch failed ({exc}); trying rss2json gateway.")
+        try:
+            posts = from_rss2json(FEED_URL)
+            print(f"Fetched {len(posts)} post(s) via rss2json gateway")
+        except Exception as exc2:
+            print(f"::warning::rss2json also failed ({exc2}). Keeping existing data.")
+            return 0
 
     os.makedirs(os.path.dirname(OUT_PATH) or ".", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as handle:
