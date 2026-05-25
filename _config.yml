@@ -4,6 +4,13 @@ description: Applied Microeconomist | Fulbright Scholar
 url: "https://sherafghanasad.com"
 baseurl: ""
 
+# Substack newsletter
+# IMPORTANT: replace the value below with your publication's subdomain.
+# Find it in Substack under Settings > Publication details, or in the
+# address bar when viewing your own publication homepage. No trailing slash.
+substack_url: "https://sherafghanasad.substack.com"
+substack_profile: "https://substack.com/@sherafghanasad"
+
 # Build settings
 markdown: kramdown
 permalink: /:title/

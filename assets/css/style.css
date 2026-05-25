@@ -414,6 +414,34 @@ details p {
 }
 .student-info li strong { color: #2c5282; }
 
+/* ===== Newsletter ===== */
+.newsletter-intro {
+  font-size: 16px;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+.subscribe-embed {
+  text-align: center;
+  margin: 0 0 10px;
+}
+.subscribe-embed iframe {
+  max-width: 100%;
+}
+
+.substack-posts {
+  margin-top: 8px;
+}
+.substack-status {
+  font-size: 14px;
+  color: #999;
+  font-style: italic;
+}
+.substack-fallback {
+  margin-top: 14px;
+  font-size: 14px;
+}
+
 /* ===== Footer ===== */
 .site-footer {
   border-top: 1px solid #e8e8e8;

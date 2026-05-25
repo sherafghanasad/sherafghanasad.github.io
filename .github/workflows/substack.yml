@@ -1,0 +1,41 @@
+name: Sync Substack posts
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # every 6 hours
+  workflow_dispatch:         # allow manual runs from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: substack-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Fetch latest Substack posts
+        env:
+          SUBSTACK_FEED: https://sherafghanasad.substack.com/feed
+          SUBSTACK_MAX: "5"
+        run: python scripts/fetch_substack.py
+
+      - name: Commit if changed
+        run: |
+          if [ -n "$(git status --porcelain _data/substack.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add _data/substack.json
+            git commit -m "chore: sync latest Substack posts"
+            git push
+          else
+            echo "No changes to commit."
+          fi
