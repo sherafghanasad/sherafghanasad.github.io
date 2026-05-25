@@ -7,6 +7,36 @@ permalink: /broader-audience-writing/
 
 <h1>Broader Audience Writing</h1>
 
+<h2 id="substack">Substack</h2>
+
+<p class="newsletter-intro">I write on tax policy, state capacity, and the behavioral foundations of markets &mdash; translating research and field experience into ideas for a broader audience. Subscribe to get new essays by email.</p>
+
+<div class="subscribe-embed">
+  <!-- If the box looks too tall/short, adjust height (Substack's default is 320). -->
+  <iframe src="{{ site.substack_url }}/embed" width="480" height="320" style="border:1px solid #e0e0e0; background:#fff;" frameborder="0" scrolling="no" title="Subscribe to the newsletter"></iframe>
+</div>
+
+<h3 id="latest-posts">Latest Posts</h3>
+
+{% comment %} Posts are synced from the Substack RSS feed into _data/substack.json
+   by .github/workflows/substack.yml, then rendered here at build time. {% endcomment %}
+<div class="substack-posts">
+  {% assign posts = site.data.substack %}
+  {% if posts and posts.size > 0 %}
+    {% for post in posts %}
+    <div class="writing-entry">
+      <p class="writing-title"><a href="{{ post.link }}" target="_blank" rel="noopener">{{ post.title }}</a></p>
+      {% if post.date %}<p class="writing-meta">{{ post.date }}</p>{% endif %}
+      {% if post.excerpt %}<p class="writing-desc">{{ post.excerpt }}</p>{% endif %}
+    </div>
+    {% endfor %}
+    <p class="substack-fallback"><a href="{{ site.substack_url }}" target="_blank" rel="noopener">See all posts on Substack &rarr;</a></p>
+  {% else %}
+    <p class="substack-status">No posts yet &mdash; subscribe above and recent essays will appear here automatically.</p>
+    <p class="substack-fallback"><a href="{{ site.substack_url }}" target="_blank" rel="noopener">Visit the publication on Substack &rarr;</a></p>
+  {% endif %}
+</div>
+
 <h2 id="policy-writing">Policy Writing</h2>
 
 <div class="writing-entry">
