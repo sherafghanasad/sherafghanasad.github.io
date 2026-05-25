@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 concurrency:
   group: substack-sync
@@ -29,6 +30,7 @@ jobs:
         run: python scripts/fetch_substack.py
 
       - name: Commit if changed
+        id: commit
         run: |
           if [ -n "$(git status --porcelain _data/substack.json)" ]; then
             git config user.name "github-actions[bot]"
@@ -36,6 +38,16 @@ jobs:
             git add _data/substack.json
             git commit -m "chore: sync latest Substack posts"
             git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           else
             echo "No changes to commit."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
+
+      # A push made with GITHUB_TOKEN does not auto-trigger the Pages build,
+      # so request one explicitly when the data actually changed.
+      - name: Trigger Pages rebuild
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
