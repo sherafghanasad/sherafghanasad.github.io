@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  pages: write
+  actions: write
 
 concurrency:
   group: substack-sync
@@ -44,10 +44,10 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
-      # A push made with GITHUB_TOKEN does not auto-trigger the Pages build,
-      # so request one explicitly when the data actually changed.
-      - name: Trigger Pages rebuild
+      # A push made with GITHUB_TOKEN doesn't auto-trigger the deploy workflow,
+      # so dispatch it explicitly when the data actually changed.
+      - name: Trigger site deploy
         if: steps.commit.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
+        run: gh workflow run jekyll.yml --ref main
