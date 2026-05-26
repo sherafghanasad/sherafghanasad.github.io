@@ -441,6 +441,11 @@ details p {
   line-height: 1.65;
   margin-top: 6px;
 }
+.engagement-link {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+.engagement-link a { color: #1a73e8; }
 
 /* ===== For Students ===== */
 .student-info {
