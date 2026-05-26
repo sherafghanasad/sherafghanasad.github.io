@@ -406,6 +406,25 @@ details p {
   background: #fafafa;
 }
 
+/* Partner logo strip */
+.partner-logos {
+  gap: 26px;
+  row-gap: 18px;
+}
+.partner-logos img {
+  height: 30px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.62;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+.partner-logos img:hover {
+  filter: grayscale(0);
+  opacity: 1;
+}
+
 .policy-cta {
   margin: 32px 0 8px;
   padding: 18px 22px;
