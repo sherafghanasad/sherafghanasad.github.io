@@ -124,19 +124,53 @@ def from_rss2json(feed_url):
     return posts
 
 
+def from_feed2json(feed_url):
+    # feed2json fetches fresh server-side (unlike rss2json, which caches hard)
+    api = "https://feed2json.org/convert?" + urllib.parse.urlencode({"url": feed_url})
+    data = json.loads(_get(api))
+    posts = []
+    for item in (data.get("items") or [])[:MAX_POSTS]:
+        desc = (strip_html(item.get("summary") or "")
+                or strip_html(item.get("content_html") or "")
+                or (item.get("content_text") or "").strip())
+        posts.append({
+            "title": (item.get("title") or "Untitled").strip(),
+            "link": (item.get("url") or "").strip(),
+            "date": fmt_date(item.get("date_published")),
+            "excerpt": excerpt(desc),
+        })
+    return posts
+
+
 def main():
+    # Try in order; the GitHub runner's IP is blocked by Substack (403), so the
+    # direct fetch usually fails on CI and a gateway is used. Prefer the first
+    # method that returns posts; feed2json fetches fresh, rss2json can be stale.
+    methods = [
+        ("direct feed", lambda: from_rss(_get(FEED_URL))),
+        ("feed2json gateway", lambda: from_feed2json(FEED_URL)),
+        ("rss2json gateway", lambda: from_rss2json(FEED_URL)),
+    ]
     posts = None
-    try:
-        posts = from_rss(_get(FEED_URL))
-        print(f"Fetched {len(posts)} post(s) directly from {FEED_URL}")
-    except Exception as exc:
-        print(f"::warning::Direct fetch failed ({exc}); trying rss2json gateway.")
+    any_success = False
+    for name, fetch in methods:
         try:
-            posts = from_rss2json(FEED_URL)
-            print(f"Fetched {len(posts)} post(s) via rss2json gateway")
-        except Exception as exc2:
-            print(f"::warning::rss2json also failed ({exc2}). Keeping existing data.")
+            result = fetch()
+        except Exception as exc:
+            print(f"::warning::{name} failed: {exc}")
+            continue
+        any_success = True
+        if result:
+            posts = result
+            print(f"Fetched {len(result)} post(s) via {name}")
+            break
+        print(f"{name} returned 0 posts")
+
+    if posts is None:
+        if not any_success:
+            print("::warning::All fetch methods failed. Keeping existing data.")
             return 0
+        posts = []  # every method agreed the feed is empty
 
     os.makedirs(os.path.dirname(OUT_PATH) or ".", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as handle:
