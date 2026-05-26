@@ -371,6 +371,56 @@ details p {
   line-height: 1.45;
 }
 
+/* ===== Policy Page ===== */
+.policy-intro {
+  font-size: 16px;
+  line-height: 1.65;
+  margin-bottom: 22px;
+}
+
+.policy-meta {
+  margin-bottom: 32px;
+}
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.meta-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #999;
+  margin-right: 4px;
+}
+.chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 999px;
+  font-size: 13px;
+  color: #444;
+  background: #fafafa;
+}
+
+.policy-cta {
+  margin: 32px 0 8px;
+  padding: 18px 22px;
+  background: #f6f8fa;
+  border: 1px solid #e3e8ee;
+  border-left: 3px solid #2c5282;
+  border-radius: 4px;
+}
+.policy-cta p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #444;
+}
+
 /* ===== Policy Engagements ===== */
 .engagement-entry {
   margin-bottom: 28px;
