@@ -448,18 +448,17 @@ details p {
 }
 .engagement-link a { color: #1a73e8; }
 
-.engagement-entry.with-cover { display: flex; gap: 22px; align-items: flex-start; }
-.engagement-main { flex: 1 1 auto; min-width: 0; }
+.engagement-entry::after { content: ""; display: table; clear: both; }
 .engagement-cover {
-  flex: 0 0 104px;
-  margin-top: 3px;
+  float: right;
+  width: 104px;
+  margin: 0 0 10px 22px;
   border: 1px solid #e7e7e7;
   line-height: 0;
 }
 .engagement-cover img { width: 100%; height: auto; display: block; }
 @media (max-width: 600px) {
-  .engagement-entry.with-cover { gap: 14px; }
-  .engagement-cover { flex-basis: 84px; }
+  .engagement-cover { width: 84px; margin-left: 16px; }
 }
 .engagement-logos {
   display: flex;
