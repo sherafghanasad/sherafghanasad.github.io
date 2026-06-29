@@ -88,6 +88,15 @@ def _get(url, timeout=30):
         return resp.read()
 
 
+def _cache_bust(feed_url):
+    # Gateways (feed2json, rss2json) cache by feed URL and will happily serve a
+    # stale snapshot that's missing the newest post. Appending a unique param
+    # makes the gateway treat it as a new URL and refetch fresh from Substack.
+    token = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+    sep = "&" if "?" in feed_url else "?"
+    return f"{feed_url}{sep}_cb={token}"
+
+
 def from_rss(raw):
     root = ET.fromstring(raw)
     ns = {"content": "http://purl.org/rss/1.0/modules/content/"}
@@ -108,7 +117,7 @@ def from_rss(raw):
 
 
 def from_rss2json(feed_url):
-    api = "https://api.rss2json.com/v1/api.json?" + urllib.parse.urlencode({"rss_url": feed_url})
+    api = "https://api.rss2json.com/v1/api.json?" + urllib.parse.urlencode({"rss_url": _cache_bust(feed_url)})
     data = json.loads(_get(api))
     if data.get("status") != "ok":
         raise RuntimeError("rss2json status %s: %s" % (data.get("status"), data.get("message")))
@@ -125,8 +134,8 @@ def from_rss2json(feed_url):
 
 
 def from_feed2json(feed_url):
-    # feed2json fetches fresh server-side (unlike rss2json, which caches hard)
-    api = "https://feed2json.org/convert?" + urllib.parse.urlencode({"url": feed_url})
+    # feed2json caches by feed URL too, so bust the cache to force a fresh fetch
+    api = "https://feed2json.org/convert?" + urllib.parse.urlencode({"url": _cache_bust(feed_url)})
     data = json.loads(_get(api))
     posts = []
     for item in (data.get("items") or [])[:MAX_POSTS]:
