@@ -30,6 +30,10 @@ dictionary. Any of Stata, R, Python, or MATLAB reads these files.
 | colonial_city | C col 4 | 1 if the town held city status under the crown |
 | royal_road_distance | R | distance to the royal roads |
 | literacy_1918, schooling_1918, vaccination_1918 | YH cols 1, 2, 3 | the 1918 outcomes used as placebos |
+| longitude, latitude, area_sqkm, elevation_m, rainfall_mm, distance_coast_km, distance_magdalena_km | G cols 1, 2, 3, 4, 5, 12, 10 | geography the study holds fixed |
+| highway_distance_m, population_1995, pop_density_1995, urban_share_1995, malaria_incidence, oil_producer | Xs cols 1, 2, 3, 4, 8, 10 | other controls |
+| land_agri_share, land_mountain_share | L cols 9, 14 | land quality and terrain |
+| slaves_share_1843, encomienda_1560, gold_mine_1560, foundation_year, population_1843 | H cols 1, 5, 6, 7, 8 | colonial and pre-colonial history |
 
 ## agjr-neighbors.csv — one row per ordered pair of neighbors (5,592 rows)
 
@@ -55,6 +59,28 @@ direction), so a merge on `neighbor_dane_code` followed by a mean by
   average: median agencies 10, 10, 11 and mean not_poor_2005 56.1, 54.9,
   58.3. Raw group means do not show the neighbor effect: that is why the
   Spotlight's Panel B is read from the paper's estimates, not rebuilt.
+
+## If you try an instrumental-variables regression
+
+The pack has what a two-stage least squares needs: own and neighbors'
+agencies, neighbors' 1794 crown employees, colonial state index and
+royal-road distance (average them over the neighbors file), and the
+controls above. What you will find:
+
+- The first stage for the *neighbors'* state is strong: neighbors' log
+  agencies on neighbors' 1794 presence, holding own presence and
+  department fixed, F(3) about 71 (n = 976). Relevance, seen.
+- The first stage for a municipality's *own* state is weak: own log
+  agencies on the same instruments, F(3) about 3. Own and neighbors' log
+  agencies correlate at about 0.30, so the lever reaches own state only
+  faintly in a single equation.
+- A plain 2SLS therefore gives own-effect estimates that swing in sign
+  and size with the control set. The study identifies the own effect
+  through its network model, in which every municipality's capacity
+  responds to every neighbor's at once, estimated as a system. That is
+  why the chapter's Panel B is read from the paper rather than rebuilt,
+  and why the honest exercise is the first stage, the placebo outcomes,
+  and the reasons a single equation cannot do the rest.
 
 Built by `04-Figures-Data/the-state/scripts/agjr-csv-pack.py` (2026-09-10).
 Redistributed for teaching with attribution to the authors; cite the
