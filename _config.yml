@@ -11,6 +11,11 @@ baseurl: ""
 substack_url: "https://sherafghanasad.substack.com"
 substack_profile: "https://substack.com/@sherafghanasad"
 
+# Social link previews (jekyll-seo-tag)
+twitter:
+  username: sherafghan_asad
+  card: summary
+
 # Build settings
 markdown: kramdown
 permalink: /:title/
@@ -35,6 +40,7 @@ defaults:
       type: "pages"
     values:
       layout: "default"
+      image: /assets/images/sher-afghan-asad.jpeg
 
 # Plugins (GitHub Pages compatible)
 plugins:
